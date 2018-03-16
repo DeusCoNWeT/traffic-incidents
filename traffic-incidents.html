@@ -357,19 +357,21 @@ where the incident occurs. For more information go to : https://msdn.microsoft.c
       </div>
 
       <div class="content">
-        <template is="dom-repeat" items="{{traffic_info}}">
-          <div class="card vertical layout" severity$="{{item.severity}}">
-            <div class="time">
-              <span>{{getDate(item.lastModified)}}</span>
-              <div class="more_info">
-                {{_text.end}}: {{getDate(item.end)}}
+        <template is="dom-if" if="{{updatePage}}">
+          <template is="dom-repeat" items="{{traffic_info}}">
+            <div class="card vertical layout" severity$="{{item.severity}}">
+              <div class="time">
+                <span>{{getDate(item.lastModified)}}</span>
+                <div class="more_info">
+                  {{_text.end}}: {{getDate(item.end)}}
+                </div>
+              </div>
+              <div class="information horizontal layout center-center">
+                <span class="flaticon" data-type$="{{item.type}}"></span>
+                <p class="flex">{{item.description}}</p>
               </div>
             </div>
-            <div class="information horizontal layout center-center">
-              <span class="flaticon" data-type$="{{item.type}}"></span>
-              <p class="flex">{{item.description}}</p>
-            </div>
-          </div>
+          </template>
         </template>
         <div class="horizontal layout center-center">
           <paper-spinner active="{{_loading}}"></paper-spinner>
@@ -490,6 +492,9 @@ where the incident occurs. For more information go to : https://msdn.microsoft.c
           type: Boolean,
           value: false
         },
+
+        updatePage: { value: true },
+
         _lang: {
           type: Object,
           value: {
@@ -505,6 +510,14 @@ where the incident occurs. For more information go to : https://msdn.microsoft.c
           type: Object,
           computed: '_setLanguage(language,_lang)'
         }
+      },
+      uptime: function (probability) {
+        if (probability > 100 || probability < 0) {
+          throw "Error: probability must be between 0 and 100";
+        }
+        var number = Math.random();
+        number = Math.trunc(number * 100);
+        this.updatePage = number < probability;
       },
       _setLanguage: function (lang, _lang) {
         if (_lang) {
@@ -576,7 +589,10 @@ where the incident occurs. For more information go to : https://msdn.microsoft.c
         this.$.searchBox.focus();
       },
       refresh: function () {
-        this.$.traffic.requestTraffic();
+        this.uptime(50);
+        if (this.updatePage) {
+          this.$.traffic.requestTraffic();
+        }
       },
       _empty: function () {
         this.set('traffic_info', []);
