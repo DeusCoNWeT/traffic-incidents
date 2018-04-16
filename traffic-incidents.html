@@ -367,7 +367,7 @@ where the incident occurs. For more information go to : https://msdn.microsoft.c
             </div>
             <div class="information horizontal layout center-center">
               <span class="flaticon" data-type$="{{item.type}}"></span>
-              <p class="flex">{{item.description}}</p>
+              <p class="flex"></p>
             </div>
           </div>
         </template>
@@ -584,7 +584,7 @@ where the incident occurs. For more information go to : https://msdn.microsoft.c
       attached: function () {
         if (!this.city) {
           this._loading = false;
-          this.$.search.click();
+          this.$.searchBox.click();
         }
       }
     });
